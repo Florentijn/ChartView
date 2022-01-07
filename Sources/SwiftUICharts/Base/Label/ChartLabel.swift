@@ -12,8 +12,10 @@ public enum ChartLabelType {
 /// A chart may contain any number of labels in pre-set positions based on their `ChartLabelType`
 public struct ChartLabel: View {
     @EnvironmentObject var chartValue: ChartValue
-    @State var textToDisplay:String = ""
+    @State var keyTextToDisplay: String = ""
+    @State var valueTextToDisplay: String = ""
     var format: String = "%.01f"
+    var keyFormatter: (String) -> String
 
     private var title: String
 
@@ -77,10 +79,13 @@ public struct ChartLabel: View {
 	///   - type: Which `ChartLabelType` to use
     public init (_ title: String,
                  type: ChartLabelType = .title,
-                 format: String = "%.01f") {
+                 format: String = "%.01f",
+                 keyFormatter: @escaping ((String) -> String) = { key in key }
+    ) {
         self.title = title
         labelType = type
         self.format = format
+        self.keyFormatter = keyFormatter
     }
 
 	/// The content and behavior of the `ChartLabel`.
@@ -88,20 +93,35 @@ public struct ChartLabel: View {
 	/// Displays current value if chart is currently being touched along a data point, otherwise the specified text.
     public var body: some View {
         HStack {
-            Text(textToDisplay)
-                .font(.system(size: labelSize))
-                .bold()
-                .foregroundColor(self.labelColor)
-                .padding(self.labelPadding)
-                .onAppear {
-                    self.textToDisplay = self.title
-                }
-                .onReceive(self.chartValue.objectWillChange) { _ in
-                    self.textToDisplay = self.chartValue.interactionInProgress ? String(format: format, self.chartValue.currentValue) : self.title
-                }
+            VStack(alignment: .leading) {
+                Text(valueTextToDisplay)
+                    .font(.system(size: labelSize))
+                    .bold()
+                    .foregroundColor(self.labelColor)
+                    .padding(self.labelPadding)
+                    .onAppear {
+                        self.valueTextToDisplay = self.title
+                    }
+                    .onReceive(self.chartValue.objectWillChange) { _ in
+                        self.valueTextToDisplay = self.chartValue.interactionInProgress ? String(format: format, self.chartValue.currentValue) : self.title
+                    }
+                Text(keyTextToDisplay)
+                    .font(.system(size: 14.0))
+                    .bold()
+                    .foregroundColor(.gray)
+                    .padding(self.labelPadding)
+                    .onAppear {
+                        self.keyTextToDisplay = self.title
+                    }
+                    .onReceive(self.chartValue.objectWillChange) { _ in
+                        self.keyTextToDisplay = self.chartValue.interactionInProgress ? keyFormatter(self.chartValue.currentKey) : ""
+                    }
+            }
+            
             if !self.chartValue.interactionInProgress {
                 Spacer()
             }
         }
+        .frame(height: 50)
     }
 }

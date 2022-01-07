@@ -35,14 +35,15 @@ public struct BarChartRow: View {
 //                    .drawingGroup()
             }
             .frame(maxHeight: chartData.isInNegativeDomain ? geometry.size.height / 2 : geometry.size.height)
-            .gesture(DragGesture()
+            .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
                 .onChanged({ value in
-                    let width = geometry.frame(in: .local).width
-                    self.touchLocation = value.location.x/width
-                    if let currentValue = self.getCurrentValue(width: width) {
-                        self.chartValue.currentValue = currentValue
-                        self.chartValue.interactionInProgress = true
-                    }
+                        let width = geometry.frame(in: .local).width
+                        self.touchLocation = value.location.x/width
+                        if let current = self.getCurrentValue(width: width) {
+                            self.chartValue.currentValue = current.1
+                            self.chartValue.currentKey = current.0
+                            self.chartValue.interactionInProgress = true
+                        }
                 })
                 .onEnded({ value in
                     self.chartValue.interactionInProgress = false
@@ -68,10 +69,10 @@ public struct BarChartRow: View {
 	/// Get data value where touch happened
 	/// - Parameter width: width of chart
 	/// - Returns: value as `Double` if chart has data
-    func getCurrentValue(width: CGFloat) -> Double? {
+    func getCurrentValue(width: CGFloat) -> (String, Double)? {
         guard self.chartData.data.count > 0 else { return nil}
             let index = max(0,min(self.chartData.data.count-1,Int(floor((self.touchLocation*width)/(width/CGFloat(self.chartData.data.count))))))
-            return self.chartData.points[index]
+            return (self.chartData.values[index], self.chartData.points[index])
         }
 }
 
