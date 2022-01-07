@@ -16,6 +16,7 @@ public struct ChartLabel: View {
     @State var valueTextToDisplay: String = ""
     var format: String = "%.01f"
     var keyFormatter: (String) -> String
+    var alwaysShowChartValue: Bool = true
 
     private var title: String
 
@@ -103,7 +104,12 @@ public struct ChartLabel: View {
                         self.valueTextToDisplay = self.title
                     }
                     .onReceive(self.chartValue.objectWillChange) { _ in
-                        self.valueTextToDisplay = self.chartValue.interactionInProgress ? String(format: format, self.chartValue.currentValue) : self.title
+                        if (alwaysShowChartValue) {
+                            self.valueTextToDisplay = String(format: format, self.chartValue.currentValue)
+                        } else {
+                            self.valueTextToDisplay = self.chartValue.interactionInProgress ? String(format: format, self.chartValue.currentValue) : self.title
+                        }
+                        
                     }
                 Text(keyTextToDisplay)
                     .font(.system(size: 14.0))
@@ -114,7 +120,11 @@ public struct ChartLabel: View {
                         self.keyTextToDisplay = self.title
                     }
                     .onReceive(self.chartValue.objectWillChange) { _ in
-                        self.keyTextToDisplay = self.chartValue.interactionInProgress ? keyFormatter(self.chartValue.currentKey) : ""
+                        if (alwaysShowChartValue) {
+                            self.keyTextToDisplay = keyFormatter(self.chartValue.currentKey)
+                        } else {
+                            self.keyTextToDisplay = self.chartValue.interactionInProgress ? keyFormatter(self.chartValue.currentKey) : ""
+                        }
                     }
             }
             

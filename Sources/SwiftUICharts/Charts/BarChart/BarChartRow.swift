@@ -5,6 +5,7 @@ public struct BarChartRow: View {
     @EnvironmentObject var chartValue: ChartValue
     @ObservedObject var chartData: ChartData
     @State private var touchLocation: CGFloat = -1.0
+    @State private var selectedLocation: CGFloat = 0.01
 
     var style: ChartStyle
     
@@ -31,6 +32,8 @@ public struct BarChartRow: View {
                                      touchLocation: self.touchLocation)
                             .scaleEffect(self.getScaleSize(touchLocation: self.touchLocation, index: index), anchor: .bottom)
                             .animation(Animation.easeIn(duration: 0.2))
+                            .opacity(self.getAlpha(touchLocation: self.selectedLocation, index: index))
+                            .animation(Animation.easeIn(duration: 0.2))
                     }
 //                    .drawingGroup()
             }
@@ -39,6 +42,9 @@ public struct BarChartRow: View {
                 .onChanged({ value in
                         let width = geometry.frame(in: .local).width
                         self.touchLocation = value.location.x/width
+                        if (touchLocation > 0 && touchLocation < 1) {
+                            self.selectedLocation = value.location.x/width
+                        }
                         if let current = self.getCurrentValue(width: width) {
                             self.chartValue.currentValue = current.1
                             self.chartValue.currentKey = current.0
@@ -50,6 +56,13 @@ public struct BarChartRow: View {
                     self.touchLocation = -1
                 })
             )
+            .onAppear {
+                if (self.chartData.data.count > 0) {
+                    self.chartValue.currentValue = self.chartData.points[0]
+                    self.chartValue.currentKey = self.chartData.values[0]
+                }
+                
+            }
         }
     }
 
@@ -64,6 +77,14 @@ public struct BarChartRow: View {
             return CGSize(width: 1.4, height: 1.1)
         }
         return CGSize(width: 1, height: 1)
+    }
+    
+    func getAlpha(touchLocation: CGFloat, index: Int) -> Double {
+        if touchLocation > CGFloat(index)/CGFloat(chartData.data.count) &&
+           touchLocation < CGFloat(index+1)/CGFloat(chartData.data.count) {
+            return 0.6
+        }
+        return 1.0
     }
 
 	/// Get data value where touch happened
