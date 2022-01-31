@@ -34,6 +34,11 @@ public struct BarChartRow: View {
                             .animation(Animation.easeIn(duration: 0.2))
                             .opacity(self.getAlpha(touchLocation: self.selectedLocation, index: index))
                             .animation(Animation.easeIn(duration: 0.2))
+                            .onTapGesture {
+                                self.chartValue.currentValue = chartData.points[index]
+                                self.chartValue.currentKey = chartData.values[index]
+                                self.selectedLocation = CGFloat(index)/CGFloat(chartData.data.count)
+                            }
                     }
 //                    .drawingGroup()
             }
@@ -72,7 +77,7 @@ public struct BarChartRow: View {
 	///   - index: index into data array
 	/// - Returns: a scale larger than 1.0 if in bounds; 1.0 (unscaled) if not in bounds
     func getScaleSize(touchLocation: CGFloat, index: Int) -> CGSize {
-        if touchLocation > CGFloat(index)/CGFloat(chartData.data.count) &&
+        if touchLocation >= CGFloat(index)/CGFloat(chartData.data.count) &&
            touchLocation < CGFloat(index+1)/CGFloat(chartData.data.count) {
             return CGSize(width: 1.4, height: 1.1)
         }
@@ -80,7 +85,7 @@ public struct BarChartRow: View {
     }
     
     func getAlpha(touchLocation: CGFloat, index: Int) -> Double {
-        if touchLocation > CGFloat(index)/CGFloat(chartData.data.count) &&
+        if touchLocation >= CGFloat(index)/CGFloat(chartData.data.count) &&
            touchLocation < CGFloat(index+1)/CGFloat(chartData.data.count) {
             return 0.6
         }
