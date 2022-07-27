@@ -464,7 +464,7 @@ extension CGPoint {
 	/// - Returns: <#description#>
     static func controlPointForPoints(firstPoint: CGPoint, secondPoint: CGPoint) -> CGPoint {
         var controlPoint = CGPoint.midPointForPoints(firstPoint: firstPoint, secondPoint: secondPoint)
-        let diffY = abs(secondPoint.y - controlPoint.y)
+        let diffY = 0.0 // abs(secondPoint.y - controlPoint.y)
         
         if firstPoint.y < secondPoint.y {
             controlPoint.y += diffY

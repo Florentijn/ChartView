@@ -78,15 +78,18 @@ public struct ChartLabel: View {
 	/// - Parameters:
 	///   - title: Any `String`
 	///   - type: Which `ChartLabelType` to use
-    public init (_ title: String,
-                 type: ChartLabelType = .title,
-                 format: String = "%.01f",
-                 keyFormatter: @escaping ((String) -> String) = { key in key }
+    public init (
+         _ title: String,
+         type: ChartLabelType = .title,
+         format: String = "%.01f",
+         keyFormatter: @escaping ((String) -> String) = { key in key },
+         alwaysShowChartValue: Bool = true
     ) {
         self.title = title
         labelType = type
         self.format = format
         self.keyFormatter = keyFormatter
+        self.alwaysShowChartValue = alwaysShowChartValue
     }
 
 	/// The content and behavior of the `ChartLabel`.
@@ -117,7 +120,7 @@ public struct ChartLabel: View {
                     .foregroundColor(.gray)
                     .padding(self.labelPadding)
                     .onAppear {
-                        self.keyTextToDisplay = self.title
+                        self.keyTextToDisplay = ""
                     }
                     .onReceive(self.chartValue.objectWillChange) { _ in
                         if (alwaysShowChartValue) {

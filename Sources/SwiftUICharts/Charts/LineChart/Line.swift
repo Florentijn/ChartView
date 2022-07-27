@@ -14,8 +14,13 @@ public struct Line: View {
 
     var curvedLines: Bool = true
     var path: Path {
-        Path.quadCurvedPathWithPoints(points: chartData.normalisedPoints,
-                                      step: CGPoint(x: 1.0, y: 1.0))
+        let offset = computeOffset(data: chartData.normalisedPoints)
+        
+        return Path.quadCurvedPathWithPoints(
+            points: chartData.normalisedPoints,
+            step: CGPoint(x: 1.0, y: 1.0),
+            globalOffset: offset
+        )
     }
     
 	/// The content and behavior of the `Line`.
@@ -80,6 +85,7 @@ extension Line {
         var denormClosest = closest.denormalize(with: geometry)
         denormClosest.x = denormClosest.x / CGFloat(chartData.normalisedPoints.count - 1)
         denormClosest.y = denormClosest.y / CGFloat(chartData.normalisedRange)
+        
         return denormClosest
     }
 
@@ -90,6 +96,7 @@ extension Line {
         let index = Int(round((touchLocation.x / geometryWidth) * CGFloat(chartData.points.count - 1)))
         if (index >= 0 && index < self.chartData.data.count){
             self.chartValue.currentValue = self.chartData.points[index]
+            self.chartValue.currentKey = self.chartData.values[index]
         }
     }
 }
