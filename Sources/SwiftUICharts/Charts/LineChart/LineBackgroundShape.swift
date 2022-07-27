@@ -3,7 +3,10 @@ import SwiftUI
 struct LineBackgroundShape: Shape {
     var data: [Double]
     func path(in rect: CGRect) -> Path {
-        let path = Path.quadClosedCurvedPathWithPoints(points: data, step: CGPoint(x: 1.0, y: 1.0))
+        
+        let offset = computeOffset(data: data)
+        
+        let path = Path.quadClosedCurvedPathWithPoints(points: data, step: CGPoint(x: 1.0, y: 1.0), globalOffset: offset)
         return path
     }
 }

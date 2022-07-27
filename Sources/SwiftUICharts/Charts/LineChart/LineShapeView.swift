@@ -14,8 +14,10 @@ struct LineShapeView: View, Animatable {
     var body: some View {
         LineShape(data: chartData.normalisedPoints)
             .trim(from: 0, to: CGFloat(trimTo))
-            .transform(CGAffineTransform(scaleX: geometry.size.width / CGFloat(chartData.normalisedPoints.count - 1),
-                                         y: geometry.size.height / CGFloat(chartData.normalisedRange)))
+            .transform(CGAffineTransform(
+                scaleX: geometry.size.width / CGFloat(chartData.normalisedPoints.count - 1),
+                y: geometry.size.height / CGFloat(chartData.normalisedRange)
+            ))
             .stroke(LinearGradient(gradient: style.foregroundColor.first?.gradient ?? ColorGradient.orangeBright.gradient,
                                    startPoint: .leading,
                                    endPoint: .trailing),

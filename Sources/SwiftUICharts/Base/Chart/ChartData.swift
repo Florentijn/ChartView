@@ -18,7 +18,14 @@ public class ChartData: ObservableObject {
     }
 
     var normalisedRange: Double {
-        (normalisedPoints.max() ?? 0.0) - (normalisedPoints.min() ?? 0.0)
+        let range = (normalisedPoints.max() ?? 0.0) - (normalisedPoints.min() ?? 0.0)
+        
+        if (range == 0.0) {
+            return 0.5
+        } else {
+            return range
+        }
+        
     }
 
     var isInNegativeDomain: Bool {

@@ -3,7 +3,10 @@ import SwiftUI
 struct LineShape: Shape {
     var data: [Double]
     func path(in rect: CGRect) -> Path {
-        let path = Path.quadCurvedPathWithPoints(points: data, step: CGPoint(x: 1.0, y: 1.0))
+        
+        let offset = computeOffset(data: data)
+        
+        let path = Path.quadCurvedPathWithPoints(points: data, step: CGPoint(x: 1.0, y: 1.0), globalOffset: offset)
         return path
     }
 }
@@ -27,4 +30,20 @@ struct LineShape_Previews: PreviewProvider {
             }
         }
     }
+}
+
+func computeOffset(data: [Double]) -> Double? {
+    var allTheSame = true
+    data.forEach{ num in
+        if num != data[0] {
+            allTheSame = false
+        }
+    }
+    
+    var offset: Double? = nil
+    if allTheSame {
+        offset = 0.5
+    }
+    
+    return offset
 }

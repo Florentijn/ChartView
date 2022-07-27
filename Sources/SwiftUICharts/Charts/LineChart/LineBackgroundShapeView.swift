@@ -7,8 +7,10 @@ struct LineBackgroundShapeView: View {
 
     var body: some View {
         LineBackgroundShape(data: chartData.normalisedPoints)
-            .transform(CGAffineTransform(scaleX: geometry.size.width / CGFloat(chartData.normalisedPoints.count - 1),
-                                         y: geometry.size.height / CGFloat(chartData.normalisedRange)))
+            .transform(CGAffineTransform(
+                scaleX: geometry.size.width / CGFloat(chartData.normalisedPoints.count - 1),
+                y: geometry.size.height / CGFloat(chartData.normalisedRange)
+            ))
             .fill(LinearGradient(gradient: Gradient(colors: [style.foregroundColor.first?.startColor ?? .white,
                                                              style.backgroundColor.startColor]),
                                  startPoint: .bottom,
